@@ -2,6 +2,7 @@ import io
 import numpy as np
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from tensorflow import keras
 
 IMG_SIZE = 224 
@@ -11,6 +12,15 @@ class_names = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"
 model = keras.models.load_model("mobilenetv2_emotion.keras")
 
 app = FastAPI(title="Emotion Recognition API")
+
+# Add CORS middleware to allow frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Next.js dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def predict_emotion_from_bytes(image_bytes: bytes):
     # Load image from bytes
